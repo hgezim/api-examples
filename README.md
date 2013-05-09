@@ -1,4 +1,4 @@
 api-examples
 ============
 
-Ziplist Spice API Code examples and shims
+Ziplist Spice API Code Examples and Software Shims
