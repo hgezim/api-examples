@@ -1,0 +1,10 @@
+**/*~
+**/.#*
+*.class
+*.exe
+*.local.yml
+*.swp
+*~
+.#*
+.DS_Store
+TODO
