@@ -65,8 +65,8 @@ public class GenerateHmac
 
   static public void Main ()
   {
-    string partner_key = "mypartnerkey";
-    string secret      = "mypartnersecret";
+    string partner_key = "joesfoodblog";
+    string secret      = "0123456789abcdeffedcba9876543210";
 
     // 5 minutes from now
     string expires_at  = (Convert.ToInt32((DateTime.UtcNow - new DateTime(1970, 1, 1)).TotalSeconds) + 300).ToString();
