@@ -6,10 +6,8 @@ api-examples
 This repository contains software examples, and sample shims for working with 
 the ZipList, Inc. SPICE APIs.  If you are a ZipList partner, or potential 
 partner then feel free to have a look around.  If you are just curious, 
-feel free to look around.
-
-Please take a moment to read the license. It is paraphrased below in plain 
-english.
+feel free to look around. Please take a moment to read the license. It 
+is paraphrased below in plain english.
 
 This is all sample code.  There is no warranty.  There are no claims that 
 it will work properly.  These examples are meant for demonstration purposes 
@@ -35,8 +33,8 @@ code. You should contact <partners@ziplist.com>, if you are interested
 in becoming a partner and working with the ZipList APIs.
 
 ### HMAC Examples -
-One of the big hurdles for working with our APIs is authentication.  
-While ther are exceptions, the vast majority of partner integrations 
+One of the big hurdles for working with our APIs is authentication. While 
+there are exceptions, the vast majority of partner integrations 
 will use a partner signed HMAC solution.
 
 The hmac-exmaples subdirectory contains self contained examples of generating
@@ -61,5 +59,11 @@ and back again is generally a very easy one.
 If you build a shim in your platform language of choice, and wish to 
 contribute it back to this effort, then by all means send us a pull 
 request, we'd love to have it.
+
+The shims provided each have a simple test file, which serves more as a
+simple how-to than anything else.  These will guide you through making
+some of the simple calls to the ZipList APIs, such as getting the current
+user information, adding to your shopping list, recipe searches, adding
+recipes to your recipe box, etc.
 
 
