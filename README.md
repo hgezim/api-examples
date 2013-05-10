@@ -1,15 +1,15 @@
 api-examples
 ============
 
-# Ziplist Spice API Code Examples and Software Shims
+# Ziplist Spice API Code Examples
 
 This repository contains software examples, and sample shims for working with 
 the ZipList, Inc. SPICE APIs.  If you are a ZipList partner, or potential 
 partner then feel free to have a look around.  If you are just curious, 
 feel free to look around.
 
-Please take a moment to read the license. It is paraphrased here in plain 
-english:
+Please take a moment to read the license. It is paraphrased below in plain 
+english.
 
 This is all sample code.  There is no warranty.  There are no claims that 
 it will work properly.  These examples are meant for demonstration purposes 
@@ -27,11 +27,12 @@ Inc.  APIs.
 ## Contents
 
 Before swan diving into this code, it is recommended you read through the
-only API documentation.  
+online API documentation.  
 [You can access it here](http://api.ziplist.com/developers)
 In particular, you are going to want to look at the authentication
 and the partner signed HMAC documentation before you delve into this
-code.
+code. You should contact <partners@ziplist.com>, if you are interested 
+in becoming a partner and working with the ZipList APIs.
 
 ### HMAC Examples -
 One of the big hurdles for working with our APIs is authentication.  
