@@ -30,7 +30,13 @@
 // AGREEMENT WITH ZIPLIST, TO USE ITS APIS.
 //
 
+
+// Build it on a mac with Mono SDK, and runtime. Mileage may vary.
+// $ gmcs -reference:System.Web csharp-hmac.cs 
+// $ mono csharp-hmac.exe 
+
 using System;
+using System.Web;
 using System.Text;
 using System.Security.Cryptography;
 
@@ -74,7 +80,7 @@ public class GenerateHmac
     string path = "/api/echo?text=helloworld&zlc_expires_at={0}&zlc_partner_key={1}";
 
     string uri = String.Format( path,
-                                HttUtility.UrlEncode(expires_at),
+                                HttpUtility.UrlEncode(expires_at),
                                 HttpUtility.UrlEncode(partner_key) );
 
     string hmac = GenerateHmac.generateHmac(expires_at, uri, partner_key, secret, "", "");
