@@ -1,0 +1,13 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|x86" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="ZipListAPIShim/ZLAPIConnection.cs">
+    <Files>
+      <File FileName="ZipListAPIShim/ZLAPIConnectionExample.cs" Line="90" Column="41" />
+      <File FileName="ZipListAPIShim/ZLAPIConnection.cs" Line="186" Column="20" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>
