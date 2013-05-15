@@ -55,10 +55,13 @@ and back again is generally a very easy one.
 
 - Perl Shim - perl-shim subdirectory
 - PHP Shim  - php-shim subdirectory
+- C#  Shim  - csharp-shim subdirectory
 
 If you build a shim in your platform language of choice, and wish to 
 contribute it back to this effort, then by all means send us a pull 
-request, we'd love to have it.
+request, we'd love to have it. If you have significant improvements to
+one of the ones we have provided, and wish to contribute them back to
+the project, we would love to have those as well.
 
 The shims provided each have a simple test file, which serves more as a
 simple how-to than anything else.  These will guide you through making
