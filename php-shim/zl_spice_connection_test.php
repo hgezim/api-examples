@@ -287,8 +287,7 @@ function test_create_recipe()
                         'cook_time'=>"30 min",
                         'text_ingredients'=>$ingredients,
                         'private'=>false,
-                        'instructions'=>array("Cook","Eat"),
-                        'user_tags'=>array("favorite","easy dinner", "delicous")
+                        'instructions'=>array("Cook","Eat")
                      );
 
   $request = array('recipe'=>$new_recipe);
