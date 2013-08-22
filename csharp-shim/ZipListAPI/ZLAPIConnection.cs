@@ -199,7 +199,7 @@ namespace ZipList.API
                                  Dictionary<String, String> query_params, 
                                  Dictionary<String, Object> body )
         {
-            return call (service_path, "PUT", query_params, body);
+            return call (service_path, "POST", query_params, body);
         }
 
 
