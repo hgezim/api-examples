@@ -462,6 +462,39 @@ function test_search_recipes( $brief )
   }
 }
 
+function test_add_item_to_list(array $new_list_items)
+{
+  global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
+
+  printf("\nAdd %s items to Shopping List---\n", count($new_list_items));
+  //
+  // Create a new connection object, without user credentials.
+  //
+  $con = new ZiplistSpiceConnection( $partner_key,
+                                     $secret_key,
+                                     $partner_username );
+  //
+  // Redirect it to our test / integration host.
+  //
+  $con->use_ssl = false;
+  $con->host = $test_host;
+  $con->port = $test_port;
+
+  $input = array();
+  $input['brief'] = true;
+  $input['items'] = $items;
+
+  $request = array('text_list_items'=>$new_list_items);
+
+  $result = $con->post('/api/lists/add_to_list', null, $request);
+
+  assert_success($con, $result);
+
+  foreach($new_list_items as $new_list_item) {
+    printf("\t'%s' was added to user shopping list.\n", $new_list_item);
+  }
+}
+
 
 test_feed();
 test_echo_service();
@@ -473,7 +506,6 @@ test_remove_recipe_from_box($new_recipe_zlid);
 test_get_recipe_box();
 test_delete_recipe($new_recipe_zlid);
 test_search_recipes(true);
-
+test_add_item_to_list(array('eggs','milk','bread'));
 
 ?>
-
