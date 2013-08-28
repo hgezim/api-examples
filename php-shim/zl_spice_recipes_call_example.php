@@ -34,62 +34,11 @@
 
 require("zl_spice_connection.php");
 
-//
-// Put your partner credentials here.
-//
-$partner_key = "joesfoodblog";
-$secret_key = "0123456789abcdeffedcba9876543210";
-
-//
-// Included a test partner_username for testing only.
-//
-$partner_username = "some-unique-token-identifying-your-user";
-
-$test_host = "api.ziplist.com";
-$test_port = 80;
-
-// Don't forget to specify port 443 for most SSL transactions.
-// $test_port = 443;
-
-// ---
-// Quick and easy way to check spice call results for testing...
-//
-function assert_success( $connection, $result )
-{
-  if ( $connection->last_error_number != 0 )
-  {
-    exit("HTTP operation failed: $connection->last_error_msg \n");
-  }
-  elseif ( ( $connection->last_http_code < 200 ) ||
-           ( $connection->last_http_code >= 300  ) )
-  {
-    var_dump($result);
-    exit("Spice call failed: $connection->last_http_code \n");
-  }
-}
-
-
 function test_discovery_feed()
 {
-  global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
-
   printf("\nTest Discovery Feed Service ---\n");
-  //
-  // Create a new connection object, with user credentials.
-  //
-  $con = new ZiplistSpiceConnection( $partner_key,
-                                     $secret_key,
-                                     $partner_username );
-  //
-  // Redirect it to our test / integration host.
-  //
-  $con->use_ssl = false;
-  $con->host = $test_host;
-  $con->port = $test_port;
-
-  //
+  $con = create_connection();
   // Query string
-  //
   $query = null;
 
   printf("echo_text = %s\n", $query['text']);
@@ -125,25 +74,9 @@ function test_discovery_feed()
 
 function test_echo_service()
 {
-  global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
-
   printf("\nTest Echo Service ---\n");
-  //
-  // Create a new connection object, with user credentials.
-  //
-  $con = new ZiplistSpiceConnection( $partner_key,
-                                     $secret_key,
-                                     $partner_username );
-  //
-  // Redirect it to our test / integration host.
-  //
-  $con->use_ssl = false;
-  $con->host = $test_host;
-  $con->port = $test_port;
-
-  //
+  $con = create_connection();
   // Query string
-  //
   $query['text'] = '123';
 
   printf("echo_text = %s\n", $query['text']);
@@ -168,22 +101,8 @@ function test_echo_service()
 //
 function test_get_recipe_box()
 {
-  global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
-
   printf("\nGet User's Recipe Box ---\n");
-  //
-  // Create a new connection object, with user credentials.
-  //
-  $con = new ZiplistSpiceConnection( $partner_key,
-                                     $secret_key,
-                                     $partner_username );
-  //
-  // Redirect it to our test / integration host.
-  //
-  $con->use_ssl = false;
-  $con->host = $test_host;
-  $con->port = $test_port;
-
+  $con = create_connection();
   //
   // Ask for brief versions of the recipes.
   //
@@ -216,25 +135,9 @@ $con->output_formatted_json($result);
 //
 function test_recipe_get_public_view()
 {
-  global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
-
   printf("\nGet User's Recipe Box ---\n");
-  //
-  // Create a new connection object, with user credentials.
-  //
-  $con = new ZiplistSpiceConnection( $partner_key,
-                                     $secret_key,
-                                     "" );
-  //
-  // Redirect it to our test / integration host.
-  //
-  $con->use_ssl = false;
-  $con->host = $test_host;
-  $con->port = $test_port;
-
-  //
+  $con = create_connection();
   // Ask for brief versions of the recipes.
-  //
   $query['brief'] = true;
 
   //
@@ -258,28 +161,8 @@ function test_recipe_get_public_view()
 //
 function test_create_recipe()
 {
-  global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
-
   printf("\nCreate New Recipe ---\n");
-  //
-  // Create a new connection object, without user credentials.
-  //
-  $con = new ZiplistSpiceConnection( $partner_key,
-                                     $secret_key,
-                                     null );
-
-  //
-  // Now we are acting as a publisher. We are going to create a brand
-  // new recipe in the system.
-  //
-
-  //
-  // Redirect it to our test / integration host.
-  //
-  $con->use_ssl = false;
-  $con->host = $test_host;
-  $con->port = $test_port;
-
+  $con = create_connection();
   $ingredients = array( "shrimp", "grits", "cheese" );
 
   $new_recipe = array(  'title'=>"Rod's Awesome Shrimp & Grits",
@@ -314,23 +197,8 @@ function test_create_recipe()
 
 function test_add_recipe_to_box($zlid)
 {
-  global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
-
   printf("\nAdd Recipe '%s' to User Box---\n", $zlid);
-  //
-  // Create a new connection object, without user credentials.
-  //
-  $con = new ZiplistSpiceConnection( $partner_key,
-                                     $secret_key,
-                                     $partner_username );
-  //
-  // Redirect it to our test / integration host.
-  //
-  $con->use_ssl = false;
-  $con->host = $test_host;
-  $con->port = $test_port;
 
-  // Tip: If you will get the recipe resource back in the results of this call.
   // If you aren't interested in the data, specify the brief flag and keep the
   // work and data transferred to a minimum.
   $input = array();
@@ -346,22 +214,8 @@ function test_add_recipe_to_box($zlid)
 
 function test_remove_recipe_from_box($zlid)
 {
-  global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
-
   printf("\nRemove Recipe '%s' from User Box---\n", $zlid);
-  //
-  // Create a new connection object, without user credentials.
-  //
-  $con = new ZiplistSpiceConnection( $partner_key,
-                                     $secret_key,
-                                     $partner_username );
-  //
-  // Redirect it to our test / integration host.
-  //
-  $con->use_ssl = false;
-  $con->host = $test_host;
-  $con->port = $test_port;
-
+  $con = create_connection();
   //
   // You can remove the recipe from the users recipe box via
   // the remove_from_box service entry point. Shown below.
@@ -387,22 +241,9 @@ function test_remove_recipe_from_box($zlid)
 
 function test_delete_recipe($zlid)
 {
-  global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
-
   printf("\nDelete Recipe '%s' As Publisher ---\n", $zlid);
-  //
-  // Create a new connection object, without user credentials.
-  //
-  $con = new ZiplistSpiceConnection( $partner_key,
-                                     $secret_key,
-                                     null );
-  //
-  // Redirect it to our test / integration host.
-  //
-  $con->use_ssl = false;
-  $con->host = $test_host;
-  $con->port = $test_port;
 
+  $con = create_connection();
   $input = array();
   $input['brief'] = true;
   $input['zlid'] = $zlid;
@@ -418,26 +259,12 @@ function test_delete_recipe($zlid)
 
 function test_search_recipes( $brief )
 {
-  global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
-
   printf("\nSearch For Recipes ---\n");
-  //
-  // Create a new connection object, with user credentials.
-  //
-  $con = new ZiplistSpiceConnection( $partner_key,
-                                     $secret_key,
-                                     $partner_username );
-  //
-  // Redirect it to our test / integration host.
-  //
-  $con->use_ssl = false;
-  $con->host = $test_host;
-  $con->port = $test_port;
-
+  $con = create_connection();
   //
   // Ask for brief versions of the recipes.
   //
-  $query['q'] =     "shrimp";
+  $query['q'] =     "Shrimp";
   $query['brief'] = $brief;
   $query['per_page']   = 10;
   $query['page']       = 1;
@@ -462,50 +289,17 @@ function test_search_recipes( $brief )
   }
 }
 
-function test_add_item_to_list(array $new_list_items)
-{
-  global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
-
-  printf("\nAdd %s items to Shopping List---\n", count($new_list_items));
-  //
-  // Create a new connection object, without user credentials.
-  //
-  $con = new ZiplistSpiceConnection( $partner_key,
-                                     $secret_key,
-                                     $partner_username );
-  //
-  // Redirect it to our test / integration host.
-  //
-  $con->use_ssl = false;
-  $con->host = $test_host;
-  $con->port = $test_port;
-
-  $input = array();
-  $input['brief'] = true;
-  $input['items'] = $items;
-
-  $request = array('text_list_items'=>$new_list_items);
-
-  $result = $con->post('/api/lists/add_to_list', null, $request);
-
-  assert_success($con, $result);
-
-  foreach($new_list_items as $new_list_item) {
-    printf("\t'%s' was added to user shopping list.\n", $new_list_item);
-  }
-}
-
-
-test_feed();
+// Basic tests
 test_echo_service();
-test_get_recipe_box();
-$new_recipe_zlid = test_create_recipe();
-test_add_recipe_to_box($new_recipe_zlid);
-test_get_recipe_box();
+
+// Test removing a recipe. This is done as a user.
 test_remove_recipe_from_box($new_recipe_zlid);
 test_get_recipe_box();
-test_delete_recipe($new_recipe_zlid);
-test_search_recipes(true);
-test_add_item_to_list(array('eggs','milk','bread'));
 
+// Test deleting a recipe from the database. This is done as a publisher.
+test_delete_recipe($new_recipe_zlid);
+test_get_recipe_box();
+
+// Work in Progress.
+// test_search_recipes(true);
 ?>
