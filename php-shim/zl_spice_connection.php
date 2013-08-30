@@ -58,20 +58,6 @@
 //
 
 
-//
-// Put your partner credentials here.
-//
-$partner_key = "joesfoodblog";
-$secret_key = "0123456789abcdeffedcba9876543210";
-
-//
-// Included a test partner_username for testing only.
-//
-$partner_username = "some-unique-token-identifying-your-user";
-
-$test_host = "api.ziplist.com";
-$test_port = 80;
-
 class ZipListSpiceConnection
 {
 
@@ -732,35 +718,6 @@ class ZipListSpiceConnection
         else echo "\"".$value."\";\n";
     }
     echo $indent_text."}\n";
-  }
-}
-
-// Set up our connection
-function create_connection() {
-    global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
-    // Create a new connection object, without user credentials.
-    $con = new ZiplistSpiceConnection( $partner_key,
-                                       $secret_key,
-                                       $partner_username );
-    // Redirect it to our test / integration host.
-    $con->use_ssl = false;
-    $con->host = $test_host;
-    $con->port = $test_port;
-    return $con;
-}
-
-// Quick and easy way to check spice call results for testing...
-function assert_success( $connection, $result )
-{
-  if ( $connection->last_error_number != 0 )
-  {
-    exit("HTTP operation failed: $connection->last_error_msg \n");
-  }
-  elseif ( ( $connection->last_http_code < 200 ) ||
-           ( $connection->last_http_code >= 300  ) )
-  {
-    var_dump($result);
-    exit("Spice call failed: $connection->last_http_code \n");
   }
 }
 

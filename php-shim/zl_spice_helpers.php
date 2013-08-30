@@ -30,62 +30,37 @@
 // ACCESS TO THIS SOURCE CODE DOES NOT GRANT NOR DOES IT IMPLY A LICENSE
 // AGREEMENT WITH ZIPLIST, TO USE ITS APIS.
 //
+//---
+// zl_spice_helpers.php
+//
 
-require("zl_spice_connection.php");
-require("zl_spice_helpers.php");
-require("zl_spice_config.php");
-
-function test_add_item_to_list(array $new_list_items)
-{
-  printf("\nAdd %s items to Shopping List---\n", count($new_list_items));
-
-  $con = create_connection();
-  $request = array('text_list_items'=>$new_list_items);
-  $result = $con->post('/api/lists/add_to_list', null, $request);
-
-  assert_success($con, $result);
-
-  foreach($new_list_items as $new_list_item) {
-    printf("\t'%s' was added to user shopping list.\n", $new_list_item);
-  }
-  // Dump the whole message.
-  $con->output_formatted_json($result, 2);
+// Set up our connection
+function create_connection() {
+    global $test_host, $test_port, $partner_key, $secret_key, $partner_username;
+    // Create a new connection object, without user credentials.
+    $con = new ZiplistSpiceConnection( $partner_key,
+                                       $secret_key,
+                                       $partner_username );
+    // Redirect it to our test / integration host.
+    $con->use_ssl = false;
+    $con->host = $test_host;
+    $con->port = $test_port;
+    return $con;
 }
 
-function test_remove_items_from_list(array $list_items_to_remove)
+// Quick and easy way to check spice call results for testing...
+function assert_success( $connection, $result )
 {
-  printf("\nRemove %s items from Shopping List---\n", count($list_items_to_remove));
-
-  $con = create_connection();
-  $request = array('remove_items'=>$list_items_to_remove);
-  $result = $con->post('/api/lists/remove_from_list', null, $request);
-
-  assert_success($con, $result);
-
-  printf("\t%d items were removed from your shopping list.\n", count($list_items_to_remove));
-}
-
-function test_show_list($zlid)
-{
-  printf("\nShow %s List---\n", $zlid);
-
-  $con = create_connection();
-  $path = '/api'.$zlid;
-  $result = $con->get($path, null, null);
-
-  assert_success($con, $result);
-
-  $list = $result['list'];
-  foreach ($list['list_items'] as $key => $value)
+  if ( $connection->last_error_number != 0 )
   {
-    printf( "\t[%s] -> [%s] - zlid: %s\n", $key, $value['original'], $value['zlid']);
+    exit("HTTP operation failed: $connection->last_error_msg \n");
+  }
+  elseif ( ( $connection->last_http_code < 200 ) ||
+           ( $connection->last_http_code >= 300  ) )
+  {
+    var_dump($result);
+    exit("Spice call failed: $connection->last_http_code \n");
   }
 }
 
-test_add_item_to_list(array('cream'));
-//
-// Pass zlids to these next functions
-//
-// test_remove_items_from_list(array('', ''));
-// test_show_list('');
 ?>

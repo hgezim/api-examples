@@ -31,8 +31,9 @@
 // AGREEMENT WITH ZIPLIST, TO USE ITS APIS.
 //
 
-
 require("zl_spice_connection.php");
+require("zl_spice_helpers.php");
+require("zl_spice_config.php");
 
 function test_discovery_feed()
 {
@@ -198,7 +199,7 @@ function test_create_recipe()
 function test_add_recipe_to_box($zlid)
 {
   printf("\nAdd Recipe '%s' to User Box---\n", $zlid);
-
+  $con = create_connection();
   // If you aren't interested in the data, specify the brief flag and keep the
   // work and data transferred to a minimum.
   $input = array();
@@ -291,6 +292,12 @@ function test_search_recipes( $brief )
 
 // Basic tests
 test_echo_service();
+
+// Test creating a recipe.  This example is done as a publisher.
+$new_recipe_zlid = test_create_recipe();
+
+// Test adding a recipe to your recipe box.
+test_add_recipe_to_box($new_recipe_zlid);
 
 // Test removing a recipe. This is done as a user.
 test_remove_recipe_from_box($new_recipe_zlid);
