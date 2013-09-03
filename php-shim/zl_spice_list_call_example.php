@@ -34,6 +34,11 @@
 require("zl_spice_connection.php");
 require("zl_spice_helpers.php");
 require("zl_spice_config.php");
+//
+// Included a test partner_username for testing only.
+//
+$partner_username = "some-unique-token-identifying-your-user";
+
 
 function test_add_item_to_list(array $new_list_items)
 {

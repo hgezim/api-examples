@@ -34,6 +34,11 @@
 require("zl_spice_connection.php");
 require("zl_spice_helpers.php");
 require("zl_spice_config.php");
+//
+// Include a test partner_username for testing only.
+//
+$partner_username = "some-unique-token-identifying-your-user";
+
 
 function test_discovery_feed()
 {
@@ -212,6 +217,37 @@ function test_add_recipe_to_box($zlid)
   printf("\tRecipe '%s' added to user box.\n", $result['recipe']['title']);
 }
 
+function test_add_user_tags(array $tags, $zlid)
+{
+  printf("\nAdd %d tags to '%s'---\n", count($tags), $zlid);
+
+  $con = create_connection();
+  $new_recipe_tags = array($tags);
+  $request = array();
+  $request['zlid'] = $zlid;
+  $request['user_tags'] = $tags;
+  $result = $con->post('/api/recipes/add_user_tags', null, $request);
+
+  assert_success($con, $result);
+
+  foreach($result['recipe']['user_tags'] as $tag) {
+    printf("\t'%s' tag added\n", $tag);
+  }
+
+  // printf("\tAdded '%s' tags to '%s'.\n", $result['recipe']['user_tags'], $result['recipe']['title']);
+}
+
+function test_show_recipe($zlid)
+{
+  $con = create_connection();
+  $path = '/api'.$zlid.'/show';
+  $result = $con->get($path, null, null);
+  $recipe = $result['recipe'];
+  assert_success($con, $result);
+
+  printf("\nHere is '%s'\n", $recipe['title'] );
+  $con->output_formatted_json($result, 2);
+}
 
 function test_remove_recipe_from_box($zlid)
 {
@@ -258,7 +294,7 @@ function test_delete_recipe($zlid)
 }
 
 
-function test_search_recipes( $brief )
+function test_search_box( $brief )
 {
   printf("\nSearch For Recipes ---\n");
   $con = create_connection();
@@ -274,7 +310,7 @@ function test_search_recipes( $brief )
   // A /recipes/index with user credentials (partner_username) will get us
   // the users recipe box.
   //
-  $result = $con->get('/api/recipes/search', $query);
+  $result = $con->get('/api/recipes/search_box', $query);
 
   assert_success($con, $result);
 
@@ -292,12 +328,16 @@ function test_search_recipes( $brief )
 
 // Basic tests
 test_echo_service();
+test_discovery_feed();
 
 // Test creating a recipe.  This example is done as a publisher.
-$new_recipe_zlid = test_create_recipe();
+ $new_recipe_zlid = test_create_recipe();
 
-// Test adding a recipe to your recipe box.
+// Test adding a recipe to your recipe box, then tagging it, showing it.
+// Tagging only works if it is added to the user box.
 test_add_recipe_to_box($new_recipe_zlid);
+test_add_user_tags(array('barbecue', 'crockpot'), $new_recipe_zlid);
+test_show_recipe($new_recipe_zlid);
 
 // Test removing a recipe. This is done as a user.
 test_remove_recipe_from_box($new_recipe_zlid);
@@ -307,6 +347,10 @@ test_get_recipe_box();
 test_delete_recipe($new_recipe_zlid);
 test_get_recipe_box();
 
-// Work in Progress.
-// test_search_recipes(true);
+//
+// WIP
+//
+// Test searching for a recipe in a user's box.
+// test_search_box(true);
+// test_recipe_get_public_view();
 ?>
