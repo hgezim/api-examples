@@ -145,15 +145,19 @@ function test_recipe_get_public_view()
   $con = create_connection();
   // Ask for brief versions of the recipes.
   $query['brief'] = true;
+  $query['public_view'] = true;
 
   //
   // A /recipes/index with user credentials (partner_username) will get us
   // the users recipe box.
   //
-  $result = $con->get('/api/recipes', $query);
+  $result = $con->get('/api/recipes/index', $query);
 
   assert_success($con, $result);
-
+  //
+  // Return public view json
+  //
+  $con->output_formatted_json($result, 2);
 }
 
 
@@ -326,6 +330,46 @@ function test_search_box( $brief )
   }
 }
 
+function test_search_public_recipes($keyword, $brief, $num)
+{
+  $con = create_connection();
+  $path = '/api/recipes/search';
+  $query['q'] =     $keyword;
+  $query['brief'] = $brief;
+  $query['per_page']   = $num;
+  $query['page']       = 1;
+  $query['sort_by']    = "most_popular";
+  $result = $con->get($path, $query);
+  assert_success($con, $result);
+
+  printf("\nHere are the top %s most popular recipes\n", $num );
+  // $con->output_formatted_json($result, 2);
+    foreach ($result['recipes'] as $key => $value)
+  {
+    printf( "\tRecipe[%d] %s - %s\n", $key, $value['zlid'], $value['title']);
+  }
+}
+
+function test_return_most_popular_recipe($keyword)
+{
+
+  $con = create_connection();
+  $path = '/api/recipes/search';
+  $query['q'] =     $keyword;
+  $query['brief'] = true;
+  $query['per_page']   = 1;
+  $query['page']       = 1;
+  $query['sort_by']    = "most_popular";
+  $result = $con->get($path, $query);
+  assert_success($con, $result);
+
+  // Return the the zlid for the most popular recipe from this search.
+  $most_popular_recipe = $result['recipes'][0]['zlid'];
+  printf("\nThe most popular recipe is %s.\n", $most_popular_recipe );
+  return $most_popular_recipe;
+
+}
+
 // Basic tests
 test_echo_service();
 test_discovery_feed();
@@ -347,10 +391,15 @@ test_get_recipe_box();
 test_delete_recipe($new_recipe_zlid);
 test_get_recipe_box();
 
-//
-// WIP
-//
-// Test searching for a recipe in a user's box.
-// test_search_box(true);
-// test_recipe_get_public_view();
+
+// Test searching a user's recipe box.
+test_search_box(true);
+test_recipe_get_public_view();
+
+// Test searching the public recipe index.
+test_search_public_recipes("Apples", true, 3);
+
+// Add the top result to the user's box.
+$top_recipe = test_return_most_popular_recipe("Chicken");
+test_add_recipe_to_box($top_recipe);
 ?>
