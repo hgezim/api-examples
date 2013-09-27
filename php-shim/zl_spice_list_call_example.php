@@ -39,30 +39,61 @@ require("zl_spice_config.php");
 //
 $partner_username = "some-unique-token-identifying-your-user";
 
-
-function test_add_item_to_list(array $new_list_items)
+function test_create_list($list_name)
 {
-  printf("\nAdd %s items to Shopping List---\n", count($new_list_items));
+  printf("\nCreate new '%s' List---\n", $list_name);
 
   $con = create_connection();
-  $request = array('text_list_items'=>$new_list_items);
-  $result = $con->post('/api/lists/add_to_list', null, $request);
+  $request['list']['name'] = $list_name;
+  $result = $con->post('/api/lists/create', null, $request);
 
   assert_success($con, $result);
 
-  foreach($new_list_items as $new_list_item) {
-    printf("\t'%s' was added to user shopping list.\n", $new_list_item);
-  }
+  printf("\t'%s' list was created.\n", $list_name);
   // Dump the whole message.
-  $con->output_formatted_json($result, 2);
+  // $con->output_formatted_json($result, 2);
+  return $result['list']['zlid'];
+}
+
+function test_delete_list($zlid)
+{
+  printf("\nDelete List -- '%s'\n", $zlid);
+
+  $con = create_connection();
+  $path = '/api'.$zlid;
+  $result = $con->del($path, null, null);
+
+  assert_success($con, $result);
+
+  printf("\t'%s'  -- list was deleted.\n", $zlid);
+  // Dump the whole message.
+  // $con->output_formatted_json($result, 2);
+}
+
+function test_add_items_to_list(array $new_list_items, $list)
+{
+  printf("\nAdd %s items to '%s' list---\n", count($new_list_items), $list);
+
+  $con = create_connection();
+  $request = array();
+  $request['zlid'] = $zlid;
+  $request['text_list_items'] = $new_list_items;
+  $result = $con->post('/api/lists/add_to_list', null, $request);
+
+  assert_success($con, $result);
+  foreach($result['updated_items'] as $key => $value) {
+    printf("\n%s was added to your list.\n", $value['original']);
+  }
 }
 
 function test_remove_items_from_list(array $list_items_to_remove)
 {
-  printf("\nRemove %s items from Shopping List---\n", count($list_items_to_remove));
+  printf("\nRemove %d items from current list.\n", count($list_items_to_remove));
 
   $con = create_connection();
-  $request = array('remove_items'=>$list_items_to_remove);
+  $request = array();
+  $request['remove_items'] = $list_items_to_remove;
+
   $result = $con->post('/api/lists/remove_from_list', null, $request);
 
   assert_success($con, $result);
@@ -76,21 +107,76 @@ function test_show_list($zlid)
 
   $con = create_connection();
   $path = '/api'.$zlid;
-  $result = $con->get($path, null, null);
+
+  $request = array();
+  $request['brief'] = true;
+
+  $result = $con->get($path, $request, null);
 
   assert_success($con, $result);
 
   $list = $result['list'];
   foreach ($list['list_items'] as $key => $value)
   {
-    printf( "\t[%s] -> [%s] - zlid: %s\n", $key, $value['original'], $value['zlid']);
+    printf( "\t[%s] -> %s - zlid: %s\n", $key, $value['original'], $value['zlid']);
   }
 }
 
-test_add_item_to_list(array('cream'));
-//
-// Pass zlids to these next functions
-//
-// test_remove_items_from_list(array('', ''));
-// test_show_list('');
+function test_index_lists()
+{
+  $con = create_connection();
+  $path = '/api/lists';
+  $result = $con->get($path, null, null);
+
+  assert_success($con, $result);
+
+  $user_lists = $result['lists'];
+  printf( "\nCurrent user has %d list(s).\n", count($user_lists));
+  foreach ($user_lists as $key => $value)
+  {
+    printf( "'%s' was created on %s and currently has %d items on it.\n%s\n", $value['name'], $value['created_at'], $value['item_count'], $value['zlid']);
+  }
+}
+
+function test_get_current_list()
+{
+  $con = create_connection();
+  $path = '/api/lists/default';
+
+  // We just want the list zlid here so we'll put that in our request by explicitly
+  // asking for a brief response without list items.
+  $request = array();
+  $request['brief'] = true;
+  $request['exclude_list_items'] = true;
+  $result = $con->get($path, $request, null);
+
+  assert_success($con, $result);
+  // Dump our brief message.
+  // $con->output_formatted_json($result, 2);
+
+  $current_list_zlid = $result['list']['zlid'];
+  printf( "\nThe zlid of the current list is: '%s'\n", $current_list_zlid );
+  return $current_list_zlid;
+}
+
+// Create a new list.
+test_create_list('Snacks');
+
+// Show all of the current user's lists.
+test_index_lists();
+
+// Get the zlid of the current list.
+$current_list = test_get_current_list();
+
+// Add some items to the list.
+test_add_items_to_list(array('bananas', 'crackers'), $current_list);
+
+// Show the list.
+test_show_list($current_list);
+
+// Delete items from the current (default) list.  This function accepts zlids.
+//  test_remove_items_from_list(array('/list_items/<list_item hash>', '/list_items/<list_item hash>'), $current_list);
+
+// Delete the current list.
+test_delete_list($current_list);
 ?>
