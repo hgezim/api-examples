@@ -81,9 +81,14 @@ function test_add_items_to_list(array $new_list_items, $list)
   $result = $con->post('/api/lists/add_to_list', null, $request);
 
   assert_success($con, $result);
+  $added_items = array();
   foreach($result['updated_items'] as $key => $value) {
-    printf("\n%s was added to your list.\n", $value['original']);
+    printf("\n%s was added to your list -- %s\n", $value['original'], $value['zlid']);
+    array_push($added_items, $value['zlid']);
   }
+
+  // $con->output_formatted_json($result, 2);
+  return $added_items;
 }
 
 function test_remove_items_from_list(array $list_items_to_remove)
@@ -169,13 +174,16 @@ test_index_lists();
 $current_list = test_get_current_list();
 
 // Add some items to the list.
-test_add_items_to_list(array('bananas', 'crackers'), $current_list);
+$list_items = test_add_items_to_list(array('carrots', 'chips'), $current_list);
 
-// Show the list.
+// Show the list with items.
 test_show_list($current_list);
 
 // Delete items from the current (default) list.  This function accepts zlids.
-//  test_remove_items_from_list(array('/list_items/<list_item hash>', '/list_items/<list_item hash>'), $current_list);
+test_remove_items_from_list($list_items, $current_list);
+
+// Show the empty list.
+test_show_list($current_list);
 
 // Delete the current list.
 test_delete_list($current_list);
